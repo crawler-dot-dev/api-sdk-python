@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 (2025-10-11)
+
+Full Changelog: [v1.0.0...v1.0.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.0...v1.0.1)
+
+### Chores
+
+* **internal:** detect missing future annotations with ruff ([15fdae7](https://github.com/crawler-dot-dev/api-sdk-python/commit/15fdae7124036c0507f50f7dbf6b2a4494c62a6c))
+
 ## 1.0.0 (2025-10-06)
 
 Full Changelog: [v0.0.1...v1.0.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v0.0.1...v1.0.0)
