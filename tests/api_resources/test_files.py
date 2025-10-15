@@ -31,7 +31,6 @@ class TestFiles:
         file = client.files.extract_text(
             file=b"raw file contents",
             clean_text=True,
-            strip_boilerplate=True,
         )
         assert_matches_type(FileExtractTextResponse, file, path=["response"])
 
@@ -81,7 +80,6 @@ class TestAsyncFiles:
         file = await async_client.files.extract_text(
             file=b"raw file contents",
             clean_text=True,
-            strip_boilerplate=True,
         )
         assert_matches_type(FileExtractTextResponse, file, path=["response"])
 

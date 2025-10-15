@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Dict
+
 import httpx
 
 from ..types import url_extract_text_params
@@ -46,8 +48,8 @@ class URLsResource(SyncAPIResource):
         *,
         url: str,
         clean_text: bool | Omit = omit,
-        render_js: bool | Omit = omit,
-        strip_boilerplate: bool | Omit = omit,
+        headers: Dict[str, str] | Omit = omit,
+        proxy: url_extract_text_params.Proxy | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -65,10 +67,9 @@ class URLsResource(SyncAPIResource):
 
           clean_text: Whether to clean extracted text
 
-          render_js: Whether to render JavaScript for HTML content. This parameter is ignored for
-              binary content types (PDF, DOC, etc.) since they are not HTML.
+          headers: Custom HTTP headers to send with the request (case-insensitive)
 
-          strip_boilerplate: Whether to remove boilerplate text
+          proxy: Proxy configuration for the request
 
           extra_headers: Send extra headers
 
@@ -84,8 +85,8 @@ class URLsResource(SyncAPIResource):
                 {
                     "url": url,
                     "clean_text": clean_text,
-                    "render_js": render_js,
-                    "strip_boilerplate": strip_boilerplate,
+                    "headers": headers,
+                    "proxy": proxy,
                 },
                 url_extract_text_params.URLExtractTextParams,
             ),
@@ -121,8 +122,8 @@ class AsyncURLsResource(AsyncAPIResource):
         *,
         url: str,
         clean_text: bool | Omit = omit,
-        render_js: bool | Omit = omit,
-        strip_boilerplate: bool | Omit = omit,
+        headers: Dict[str, str] | Omit = omit,
+        proxy: url_extract_text_params.Proxy | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -140,10 +141,9 @@ class AsyncURLsResource(AsyncAPIResource):
 
           clean_text: Whether to clean extracted text
 
-          render_js: Whether to render JavaScript for HTML content. This parameter is ignored for
-              binary content types (PDF, DOC, etc.) since they are not HTML.
+          headers: Custom HTTP headers to send with the request (case-insensitive)
 
-          strip_boilerplate: Whether to remove boilerplate text
+          proxy: Proxy configuration for the request
 
           extra_headers: Send extra headers
 
@@ -159,8 +159,8 @@ class AsyncURLsResource(AsyncAPIResource):
                 {
                     "url": url,
                     "clean_text": clean_text,
-                    "render_js": render_js,
-                    "strip_boilerplate": strip_boilerplate,
+                    "headers": headers,
+                    "proxy": proxy,
                 },
                 url_extract_text_params.URLExtractTextParams,
             ),

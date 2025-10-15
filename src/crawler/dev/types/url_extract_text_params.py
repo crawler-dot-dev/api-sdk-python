@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from typing import Dict
 from typing_extensions import Required, TypedDict
 
-__all__ = ["URLExtractTextParams"]
+__all__ = ["URLExtractTextParams", "Proxy"]
 
 
 class URLExtractTextParams(TypedDict, total=False):
@@ -14,12 +15,22 @@ class URLExtractTextParams(TypedDict, total=False):
     clean_text: bool
     """Whether to clean extracted text"""
 
-    render_js: bool
-    """Whether to render JavaScript for HTML content.
+    headers: Dict[str, str]
+    """Custom HTTP headers to send with the request (case-insensitive)"""
 
-    This parameter is ignored for binary content types (PDF, DOC, etc.) since they
-    are not HTML.
+    proxy: Proxy
+    """Proxy configuration for the request"""
+
+
+class Proxy(TypedDict, total=False):
+    password: str
+    """Proxy password for authentication"""
+
+    server: str
+    """
+    Proxy server URL (e.g., http://proxy.example.com:8080 or
+    socks5://proxy.example.com:1080)
     """
 
-    strip_boilerplate: bool
-    """Whether to remove boilerplate text"""
+    username: str
+    """Proxy username for authentication"""

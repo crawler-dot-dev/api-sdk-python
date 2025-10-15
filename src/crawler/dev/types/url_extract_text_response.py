@@ -20,8 +20,6 @@ class URLExtractTextResponse(BaseModel):
 
     status_code: Optional[int] = FieldInfo(alias="statusCode", default=None)
 
-    success: Optional[bool] = None
-
     text_length: Optional[int] = FieldInfo(alias="textLength", default=None)
 
     url: Optional[str] = None
