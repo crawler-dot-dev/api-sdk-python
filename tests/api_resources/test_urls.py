@@ -31,8 +31,16 @@ class TestURLs:
         url = client.urls.extract_text(
             url="url",
             clean_text=True,
-            render_js=True,
-            strip_boilerplate=True,
+            headers={
+                "User-Agent": "Custom Bot/1.0",
+                "X-API-Key": "my-api-key",
+                "Accept-Language": "en-US",
+            },
+            proxy={
+                "password": "password",
+                "server": "server",
+                "username": "username",
+            },
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 
@@ -82,8 +90,16 @@ class TestAsyncURLs:
         url = await async_client.urls.extract_text(
             url="url",
             clean_text=True,
-            render_js=True,
-            strip_boilerplate=True,
+            headers={
+                "User-Agent": "Custom Bot/1.0",
+                "X-API-Key": "my-api-key",
+                "Accept-Language": "en-US",
+            },
+            proxy={
+                "password": "password",
+                "server": "server",
+                "username": "username",
+            },
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 

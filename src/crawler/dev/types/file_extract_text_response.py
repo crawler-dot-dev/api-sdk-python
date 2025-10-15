@@ -18,6 +18,4 @@ class FileExtractTextResponse(BaseModel):
 
     size_bytes: Optional[int] = FieldInfo(alias="sizeBytes", default=None)
 
-    success: Optional[bool] = None
-
     text_length: Optional[int] = FieldInfo(alias="textLength", default=None)
