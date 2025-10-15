@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 (2025-10-15)
+
+Full Changelog: [v1.0.1...v1.1.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.1...v1.1.0)
+
+### Features
+
+* **api:** api update ([6f0f175](https://github.com/crawler-dot-dev/api-sdk-python/commit/6f0f17583076af70b9b029e732b998b2d58a8fca))
+
 ## 1.0.1 (2025-10-11)
 
 Full Changelog: [v1.0.0...v1.0.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.0...v1.0.1)
