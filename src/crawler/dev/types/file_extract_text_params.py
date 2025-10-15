@@ -15,6 +15,3 @@ class FileExtractTextParams(TypedDict, total=False):
 
     clean_text: bool
     """Whether to clean the extracted text"""
-
-    strip_boilerplate: bool
-    """Whether to remove boilerplate text"""

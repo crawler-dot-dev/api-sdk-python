@@ -48,7 +48,6 @@ class FilesResource(SyncAPIResource):
         *,
         file: FileTypes,
         clean_text: bool | Omit = omit,
-        strip_boilerplate: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -66,8 +65,6 @@ class FilesResource(SyncAPIResource):
 
           clean_text: Whether to clean the extracted text
 
-          strip_boilerplate: Whether to remove boilerplate text
-
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -80,7 +77,6 @@ class FilesResource(SyncAPIResource):
             {
                 "file": file,
                 "clean_text": clean_text,
-                "strip_boilerplate": strip_boilerplate,
             }
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
@@ -124,7 +120,6 @@ class AsyncFilesResource(AsyncAPIResource):
         *,
         file: FileTypes,
         clean_text: bool | Omit = omit,
-        strip_boilerplate: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -142,8 +137,6 @@ class AsyncFilesResource(AsyncAPIResource):
 
           clean_text: Whether to clean the extracted text
 
-          strip_boilerplate: Whether to remove boilerplate text
-
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -156,7 +149,6 @@ class AsyncFilesResource(AsyncAPIResource):
             {
                 "file": file,
                 "clean_text": clean_text,
-                "strip_boilerplate": strip_boilerplate,
             }
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
