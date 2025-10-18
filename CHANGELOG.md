@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 (2025-10-18)
+
+Full Changelog: [v1.1.0...v1.1.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.1.0...v1.1.1)
+
+### Chores
+
+* bump `httpx-aiohttp` version to 0.1.9 ([2e9e6b5](https://github.com/crawler-dot-dev/api-sdk-python/commit/2e9e6b5244e85897371daf2f95f02a4f88699928))
+
 ## 1.1.0 (2025-10-15)
 
 Full Changelog: [v1.0.1...v1.1.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.1...v1.1.0)
