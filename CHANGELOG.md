@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.2 (2025-10-30)
+
+Full Changelog: [v1.1.1...v1.1.2](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.1.1...v1.1.2)
+
+### Bug Fixes
+
+* **client:** close streams without requiring full consumption ([8ab4804](https://github.com/crawler-dot-dev/api-sdk-python/commit/8ab480496436a03560588f14e2a72f8250ff201a))
+
 ## 1.1.1 (2025-10-18)
 
 Full Changelog: [v1.1.0...v1.1.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.1.0...v1.1.1)
