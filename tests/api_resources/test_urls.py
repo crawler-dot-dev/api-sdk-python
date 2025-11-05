@@ -30,17 +30,22 @@ class TestURLs:
     def test_method_extract_text_with_all_params(self, client: CrawlerDev) -> None:
         url = client.urls.extract_text(
             url="url",
+            cache_age=86400000,
             clean_text=True,
             headers={
                 "User-Agent": "Custom Bot/1.0",
                 "X-API-Key": "my-api-key",
                 "Accept-Language": "en-US",
             },
+            max_redirects=5,
+            max_size=10485760,
+            max_timeout=15000,
             proxy={
                 "password": "password",
                 "server": "server",
                 "username": "username",
             },
+            stealth_mode=False,
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 
@@ -89,17 +94,22 @@ class TestAsyncURLs:
     async def test_method_extract_text_with_all_params(self, async_client: AsyncCrawlerDev) -> None:
         url = await async_client.urls.extract_text(
             url="url",
+            cache_age=86400000,
             clean_text=True,
             headers={
                 "User-Agent": "Custom Bot/1.0",
                 "X-API-Key": "my-api-key",
                 "Accept-Language": "en-US",
             },
+            max_redirects=5,
+            max_size=10485760,
+            max_timeout=15000,
             proxy={
                 "password": "password",
                 "server": "server",
                 "username": "username",
             },
+            stealth_mode=False,
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 
