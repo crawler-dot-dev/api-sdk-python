@@ -47,9 +47,14 @@ class URLsResource(SyncAPIResource):
         self,
         *,
         url: str,
+        cache_age: int | Omit = omit,
         clean_text: bool | Omit = omit,
         headers: Dict[str, str] | Omit = omit,
+        max_redirects: int | Omit = omit,
+        max_size: int | Omit = omit,
+        max_timeout: int | Omit = omit,
         proxy: url_extract_text_params.Proxy | Omit = omit,
+        stealth_mode: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -65,11 +70,30 @@ class URLsResource(SyncAPIResource):
         Args:
           url: The URL to extract text from.
 
+          cache_age: Maximum cache time in milliseconds for the webpage. Must be between 0 (no
+              caching) and 259200000 (3 days). Defaults to 172800000 (2 days) if not
+              specified.
+
           clean_text: Whether to clean extracted text
 
           headers: Custom HTTP headers to send with the request (case-insensitive)
 
+          max_redirects: Maximum number of redirects to follow when fetching the URL. Must be between 0
+              (no redirects) and 20. Defaults to 5 if not specified.
+
+          max_size: Maximum content length in bytes for the URL response. Must be between 1024 (1KB)
+              and 52428800 (50MB). Defaults to 10485760 (10MB) if not specified.
+
+          max_timeout: Maximum time in milliseconds before the crawler gives up on loading a URL. Must
+              be between 1000 (1 second) and 30000 (30 seconds). Defaults to 10000 (10
+              seconds) if not specified.
+
           proxy: Proxy configuration for the request
+
+          stealth_mode: When enabled, we use a proxy for the request. If set to true, and the 'proxy'
+              option is set, it will be ignored. Defaults to false if not specified. Note:
+              Enabling stealth_mode consumes an additional credit/quota point (2 credits total
+              instead of 1) for this request.
 
           extra_headers: Send extra headers
 
@@ -84,9 +108,14 @@ class URLsResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "url": url,
+                    "cache_age": cache_age,
                     "clean_text": clean_text,
                     "headers": headers,
+                    "max_redirects": max_redirects,
+                    "max_size": max_size,
+                    "max_timeout": max_timeout,
                     "proxy": proxy,
+                    "stealth_mode": stealth_mode,
                 },
                 url_extract_text_params.URLExtractTextParams,
             ),
@@ -121,9 +150,14 @@ class AsyncURLsResource(AsyncAPIResource):
         self,
         *,
         url: str,
+        cache_age: int | Omit = omit,
         clean_text: bool | Omit = omit,
         headers: Dict[str, str] | Omit = omit,
+        max_redirects: int | Omit = omit,
+        max_size: int | Omit = omit,
+        max_timeout: int | Omit = omit,
         proxy: url_extract_text_params.Proxy | Omit = omit,
+        stealth_mode: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -139,11 +173,30 @@ class AsyncURLsResource(AsyncAPIResource):
         Args:
           url: The URL to extract text from.
 
+          cache_age: Maximum cache time in milliseconds for the webpage. Must be between 0 (no
+              caching) and 259200000 (3 days). Defaults to 172800000 (2 days) if not
+              specified.
+
           clean_text: Whether to clean extracted text
 
           headers: Custom HTTP headers to send with the request (case-insensitive)
 
+          max_redirects: Maximum number of redirects to follow when fetching the URL. Must be between 0
+              (no redirects) and 20. Defaults to 5 if not specified.
+
+          max_size: Maximum content length in bytes for the URL response. Must be between 1024 (1KB)
+              and 52428800 (50MB). Defaults to 10485760 (10MB) if not specified.
+
+          max_timeout: Maximum time in milliseconds before the crawler gives up on loading a URL. Must
+              be between 1000 (1 second) and 30000 (30 seconds). Defaults to 10000 (10
+              seconds) if not specified.
+
           proxy: Proxy configuration for the request
+
+          stealth_mode: When enabled, we use a proxy for the request. If set to true, and the 'proxy'
+              option is set, it will be ignored. Defaults to false if not specified. Note:
+              Enabling stealth_mode consumes an additional credit/quota point (2 credits total
+              instead of 1) for this request.
 
           extra_headers: Send extra headers
 
@@ -158,9 +211,14 @@ class AsyncURLsResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "url": url,
+                    "cache_age": cache_age,
                     "clean_text": clean_text,
                     "headers": headers,
+                    "max_redirects": max_redirects,
+                    "max_size": max_size,
+                    "max_timeout": max_timeout,
                     "proxy": proxy,
+                    "stealth_mode": stealth_mode,
                 },
                 url_extract_text_params.URLExtractTextParams,
             ),
