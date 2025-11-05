@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.0 (2025-11-05)
+
+Full Changelog: [v1.1.2...v1.2.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.1.2...v1.2.0)
+
+### Features
+
+* **api:** api update ([728625c](https://github.com/crawler-dot-dev/api-sdk-python/commit/728625c3dfdbc5b81d23f3e7ca269585fc309b76))
+
+
+### Chores
+
+* **internal/tests:** avoid race condition with implicit client cleanup ([f3f004b](https://github.com/crawler-dot-dev/api-sdk-python/commit/f3f004b7af1f63fc98c30dd0b50d0040ea8c1b02))
+* **internal:** grammar fix (it's -&gt; its) ([5ad39ce](https://github.com/crawler-dot-dev/api-sdk-python/commit/5ad39ceee5d3a093a4db4dd486441d1a2c87bee7))
+
 ## 1.1.2 (2025-10-30)
 
 Full Changelog: [v1.1.1...v1.1.2](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.1.1...v1.1.2)
