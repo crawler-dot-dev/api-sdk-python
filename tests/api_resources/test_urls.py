@@ -45,7 +45,7 @@ class TestURLs:
                 "server": "server",
                 "username": "username",
             },
-            stealth_mode=False,
+            stealth_mode=True,
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 
@@ -109,7 +109,7 @@ class TestAsyncURLs:
                 "server": "server",
                 "username": "username",
             },
-            stealth_mode=False,
+            stealth_mode=True,
         )
         assert_matches_type(URLExtractTextResponse, url, path=["response"])
 
