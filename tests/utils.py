@@ -8,8 +8,8 @@ from typing import Any, TypeVar, Iterator, Sequence, cast
 from datetime import date, datetime
 from typing_extensions import Literal, get_args, get_origin, assert_type
 
-from crawler.dev._types import Omit, NoneType
-from crawler.dev._utils import (
+from api.crawler.dev_sdks._types import Omit, NoneType
+from api.crawler.dev_sdks._utils import (
     is_dict,
     is_list,
     is_list_type,
@@ -19,8 +19,8 @@ from crawler.dev._utils import (
     is_annotated_type,
     is_type_alias_type,
 )
-from crawler.dev._compat import PYDANTIC_V1, field_outer_type, get_model_fields
-from crawler.dev._models import BaseModel
+from api.crawler.dev_sdks._compat import PYDANTIC_V1, field_outer_type, get_model_fields
+from api.crawler.dev_sdks._models import BaseModel
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 

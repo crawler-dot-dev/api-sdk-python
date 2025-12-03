@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING
 import anyio
 
 if TYPE_CHECKING:
-    from ._client import CrawlerDev, AsyncCrawlerDev
+    from ._client import APICrawlerDevSDKs, AsyncAPICrawlerDevSDKs
 
 
 class SyncAPIResource:
-    _client: CrawlerDev
+    _client: APICrawlerDevSDKs
 
-    def __init__(self, client: CrawlerDev) -> None:
+    def __init__(self, client: APICrawlerDevSDKs) -> None:
         self._client = client
         self._get = client.get
         self._post = client.post
@@ -28,9 +28,9 @@ class SyncAPIResource:
 
 
 class AsyncAPIResource:
-    _client: AsyncCrawlerDev
+    _client: AsyncAPICrawlerDevSDKs
 
-    def __init__(self, client: AsyncCrawlerDev) -> None:
+    def __init__(self, client: AsyncAPICrawlerDevSDKs) -> None:
         self._client = client
         self._get = client.get
         self._post = client.post

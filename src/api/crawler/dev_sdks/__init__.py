@@ -10,11 +10,11 @@ from ._client import (
     Stream,
     Timeout,
     Transport,
-    CrawlerDev,
     AsyncClient,
     AsyncStream,
     RequestOptions,
-    AsyncCrawlerDev,
+    APICrawlerDevSDKs,
+    AsyncAPICrawlerDevSDKs,
 )
 from ._models import BaseModel
 from ._version import __title__, __version__
@@ -28,11 +28,11 @@ from ._exceptions import (
     RateLimitError,
     APITimeoutError,
     BadRequestError,
-    CrawlerDevError,
     APIConnectionError,
     AuthenticationError,
     InternalServerError,
     PermissionDeniedError,
+    APICrawlerDevSDKsError,
     UnprocessableEntityError,
     APIResponseValidationError,
 )
@@ -51,7 +51,7 @@ __all__ = [
     "not_given",
     "Omit",
     "omit",
-    "CrawlerDevError",
+    "APICrawlerDevSDKsError",
     "APIError",
     "APIStatusError",
     "APITimeoutError",
@@ -71,8 +71,8 @@ __all__ = [
     "AsyncClient",
     "Stream",
     "AsyncStream",
-    "CrawlerDev",
-    "AsyncCrawlerDev",
+    "APICrawlerDevSDKs",
+    "AsyncAPICrawlerDevSDKs",
     "file_from_path",
     "BaseModel",
     "DEFAULT_TIMEOUT",
@@ -91,12 +91,12 @@ _setup_logging()
 # Update the __module__ attribute for exported symbols so that
 # error messages point to this module instead of the module
 # it was originally defined in, e.g.
-# crawler.dev._exceptions.NotFoundError -> crawler.dev.NotFoundError
+# api.crawler.dev_sdks._exceptions.NotFoundError -> api.crawler.dev_sdks.NotFoundError
 __locals = locals()
 for __name in __all__:
     if not __name.startswith("__"):
         try:
-            __locals[__name].__module__ = "crawler.dev"
+            __locals[__name].__module__ = "api.crawler.dev_sdks"
         except (TypeError, AttributeError):
             # Some of our exported symbols are builtins which we can't set attributes for.
             pass

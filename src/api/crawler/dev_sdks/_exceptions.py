@@ -18,11 +18,11 @@ __all__ = [
 ]
 
 
-class CrawlerDevError(Exception):
+class APICrawlerDevSDKsError(Exception):
     pass
 
 
-class APIError(CrawlerDevError):
+class APIError(APICrawlerDevSDKsError):
     message: str
     request: httpx.Request
 

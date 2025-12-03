@@ -2,7 +2,7 @@ import operator
 from typing import Any
 from typing_extensions import override
 
-from crawler.dev._utils import LazyProxy
+from api.crawler.dev_sdks._utils import LazyProxy
 
 
 class RecursiveLazyProxy(LazyProxy[Any]):

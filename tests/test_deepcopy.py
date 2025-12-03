@@ -1,4 +1,4 @@
-from crawler.dev._utils import deepcopy_minimal
+from api.crawler.dev_sdks._utils import deepcopy_minimal
 
 
 def assert_different_identities(obj1: object, obj2: object) -> None:

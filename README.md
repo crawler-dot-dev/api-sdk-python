@@ -1,9 +1,9 @@
-# Crawler Dev Python API library
+# API Crawler Dev SDKs Python API library
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/crawler.dev.svg?label=pypi%20(stable))](https://pypi.org/project/crawler.dev/)
 
-The Crawler Dev Python library provides convenient access to the Crawler Dev REST API from any Python 3.8+
+The API Crawler Dev SDKs Python library provides convenient access to the API Crawler Dev SDKs REST API from any Python 3.9+
 application. The library includes type definitions for all request params and response fields,
 and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
 
@@ -26,13 +26,15 @@ The full API of this library can be found in [api.md](api.md).
 
 ```python
 import os
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-client = CrawlerDev(
-    api_key=os.environ.get("CRAWLER_DEV_API_KEY"),  # This is the default and can be omitted
+client = APICrawlerDevSDKs(
+    api_key=os.environ.get(
+        "API_CRAWLER_DEV_SDKS_API_KEY"
+    ),  # This is the default and can be omitted
 )
 
-response = client.files.extract_text(
+response = client.extract.from_file(
     file=b"REPLACE_ME",
 )
 print(response.content_type)
@@ -40,25 +42,27 @@ print(response.content_type)
 
 While you can provide an `api_key` keyword argument,
 we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `CRAWLER_DEV_API_KEY="My API Key"` to your `.env` file
+to add `API_CRAWLER_DEV_SDKS_API_KEY="My API Key"` to your `.env` file
 so that your API Key is not stored in source control.
 
 ## Async usage
 
-Simply import `AsyncCrawlerDev` instead of `CrawlerDev` and use `await` with each API call:
+Simply import `AsyncAPICrawlerDevSDKs` instead of `APICrawlerDevSDKs` and use `await` with each API call:
 
 ```python
 import os
 import asyncio
-from crawler.dev import AsyncCrawlerDev
+from api.crawler.dev_sdks import AsyncAPICrawlerDevSDKs
 
-client = AsyncCrawlerDev(
-    api_key=os.environ.get("CRAWLER_DEV_API_KEY"),  # This is the default and can be omitted
+client = AsyncAPICrawlerDevSDKs(
+    api_key=os.environ.get(
+        "API_CRAWLER_DEV_SDKS_API_KEY"
+    ),  # This is the default and can be omitted
 )
 
 
 async def main() -> None:
-    response = await client.files.extract_text(
+    response = await client.extract.from_file(
         file=b"REPLACE_ME",
     )
     print(response.content_type)
@@ -83,17 +87,20 @@ pip install crawler.dev[aiohttp]
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
 
 ```python
+import os
 import asyncio
-from crawler.dev import DefaultAioHttpClient
-from crawler.dev import AsyncCrawlerDev
+from api.crawler.dev_sdks import DefaultAioHttpClient
+from api.crawler.dev_sdks import AsyncAPICrawlerDevSDKs
 
 
 async def main() -> None:
-    async with AsyncCrawlerDev(
-        api_key="My API Key",
+    async with AsyncAPICrawlerDevSDKs(
+        api_key=os.environ.get(
+            "API_CRAWLER_DEV_SDKS_API_KEY"
+        ),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
-        response = await client.files.extract_text(
+        response = await client.extract.from_file(
             file=b"REPLACE_ME",
         )
         print(response.content_type)
@@ -116,11 +123,11 @@ Typed requests and responses provide autocomplete and documentation within your 
 Nested parameters are dictionaries, typed using `TypedDict`, for example:
 
 ```python
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-client = CrawlerDev()
+client = APICrawlerDevSDKs()
 
-response = client.urls.extract_text(
+response = client.extract.from_url(
     url="url",
     proxy={},
 )
@@ -133,11 +140,11 @@ Request parameters that correspond to file uploads can be passed as `bytes`, or 
 
 ```python
 from pathlib import Path
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-client = CrawlerDev()
+client = APICrawlerDevSDKs()
 
-client.files.extract_text(
+client.extract.from_file(
     file=Path("/path/to/file"),
 )
 ```
@@ -146,29 +153,29 @@ The async client uses the exact same interface. If you pass a [`PathLike`](https
 
 ## Handling errors
 
-When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `crawler.dev.APIConnectionError` is raised.
+When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `api.crawler.dev_sdks.APIConnectionError` is raised.
 
 When the API returns a non-success status code (that is, 4xx or 5xx
-response), a subclass of `crawler.dev.APIStatusError` is raised, containing `status_code` and `response` properties.
+response), a subclass of `api.crawler.dev_sdks.APIStatusError` is raised, containing `status_code` and `response` properties.
 
-All errors inherit from `crawler.dev.APIError`.
+All errors inherit from `api.crawler.dev_sdks.APIError`.
 
 ```python
-import crawler.dev
-from crawler.dev import CrawlerDev
+import api.crawler.dev_sdks
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-client = CrawlerDev()
+client = APICrawlerDevSDKs()
 
 try:
-    client.files.extract_text(
+    client.extract.from_file(
         file=b"REPLACE_ME",
     )
-except crawler.dev.APIConnectionError as e:
+except api.crawler.dev_sdks.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
-except crawler.dev.RateLimitError as e:
+except api.crawler.dev_sdks.RateLimitError as e:
     print("A 429 status code was received; we should back off a bit.")
-except crawler.dev.APIStatusError as e:
+except api.crawler.dev_sdks.APIStatusError as e:
     print("Another non-200-range status code was received")
     print(e.status_code)
     print(e.response)
@@ -196,16 +203,16 @@ Connection errors (for example, due to a network connectivity problem), 408 Requ
 You can use the `max_retries` option to configure or disable retry settings:
 
 ```python
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
 # Configure the default for all requests:
-client = CrawlerDev(
+client = APICrawlerDevSDKs(
     # default is 2
     max_retries=0,
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).files.extract_text(
+client.with_options(max_retries=5).extract.from_file(
     file=b"REPLACE_ME",
 )
 ```
@@ -216,21 +223,21 @@ By default requests time out after 1 minute. You can configure this with a `time
 which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) object:
 
 ```python
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
 # Configure the default for all requests:
-client = CrawlerDev(
+client = APICrawlerDevSDKs(
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
-client = CrawlerDev(
+client = APICrawlerDevSDKs(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).files.extract_text(
+client.with_options(timeout=5.0).extract.from_file(
     file=b"REPLACE_ME",
 )
 ```
@@ -245,10 +252,10 @@ Note that requests that time out are [retried twice by default](#retries).
 
 We use the standard library [`logging`](https://docs.python.org/3/library/logging.html) module.
 
-You can enable logging by setting the environment variable `CRAWLER_DEV_LOG` to `info`.
+You can enable logging by setting the environment variable `API_CRAWLER_DEV_SDKS_LOG` to `info`.
 
 ```shell
-$ export CRAWLER_DEV_LOG=info
+$ export API_CRAWLER_DEV_SDKS_LOG=info
 ```
 
 Or to `debug` for more verbose logging.
@@ -270,21 +277,21 @@ if response.my_field is None:
 The "raw" Response object can be accessed by prefixing `.with_raw_response.` to any HTTP method call, e.g.,
 
 ```py
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-client = CrawlerDev()
-response = client.files.with_raw_response.extract_text(
+client = APICrawlerDevSDKs()
+response = client.extract.with_raw_response.from_file(
     file=b"REPLACE_ME",
 )
 print(response.headers.get('X-My-Header'))
 
-file = response.parse()  # get the object that `files.extract_text()` would have returned
-print(file.content_type)
+extract = response.parse()  # get the object that `extract.from_file()` would have returned
+print(extract.content_type)
 ```
 
-These methods return an [`APIResponse`](https://github.com/crawler-dot-dev/api-sdk-python/tree/main/src/crawler/dev/_response.py) object.
+These methods return an [`APIResponse`](https://github.com/crawler-dot-dev/api-sdk-python/tree/main/src/api/crawler/dev_sdks/_response.py) object.
 
-The async client returns an [`AsyncAPIResponse`](https://github.com/crawler-dot-dev/api-sdk-python/tree/main/src/crawler/dev/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+The async client returns an [`AsyncAPIResponse`](https://github.com/crawler-dot-dev/api-sdk-python/tree/main/src/api/crawler/dev_sdks/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
 #### `.with_streaming_response`
 
@@ -293,7 +300,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.files.with_streaming_response.extract_text(
+with client.extract.with_streaming_response.from_file(
     file=b"REPLACE_ME",
 ) as response:
     print(response.headers.get("X-My-Header"))
@@ -348,10 +355,10 @@ You can directly override the [httpx client](https://www.python-httpx.org/api/#c
 
 ```python
 import httpx
-from crawler.dev import CrawlerDev, DefaultHttpxClient
+from api.crawler.dev_sdks import APICrawlerDevSDKs, DefaultHttpxClient
 
-client = CrawlerDev(
-    # Or use the `CRAWLER_DEV_BASE_URL` env var
+client = APICrawlerDevSDKs(
+    # Or use the `API_CRAWLER_DEV_SDKS_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
         proxy="http://my.test.proxy.example.com",
@@ -371,9 +378,9 @@ client.with_options(http_client=DefaultHttpxClient(...))
 By default the library closes underlying HTTP connections whenever the client is [garbage collected](https://docs.python.org/3/reference/datamodel.html#object.__del__). You can manually close the client using the `.close()` method if desired, or with a context manager that closes when exiting.
 
 ```py
-from crawler.dev import CrawlerDev
+from api.crawler.dev_sdks import APICrawlerDevSDKs
 
-with CrawlerDev() as client:
+with APICrawlerDevSDKs() as client:
   # make requests here
   ...
 
@@ -399,13 +406,13 @@ If you've upgraded to the latest version but aren't seeing any new features you 
 You can determine the version that is being used at runtime with:
 
 ```py
-import crawler.dev
-print(crawler.dev.__version__)
+import api.crawler.dev_sdks
+print(api.crawler.dev_sdks.__version__)
 ```
 
 ## Requirements
 
-Python 3.8 or higher.
+Python 3.9 or higher.
 
 ## Contributing
 

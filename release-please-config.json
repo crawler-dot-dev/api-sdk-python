@@ -61,6 +61,6 @@
   ],
   "release-type": "python",
   "extra-files": [
-    "src/crawler/dev/_version.py"
+    "src/api/crawler/dev_sdks/_version.py"
   ]
 }

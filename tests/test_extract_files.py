@@ -4,8 +4,8 @@ from typing import Sequence
 
 import pytest
 
-from crawler.dev._types import FileTypes
-from crawler.dev._utils import extract_files
+from api.crawler.dev_sdks._types import FileTypes
+from api.crawler.dev_sdks._utils import extract_files
 
 
 def test_removes_files_from_input() -> None:

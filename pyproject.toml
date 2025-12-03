@@ -1,30 +1,32 @@
 [project]
 name = "crawler.dev"
-version = "1.3.0"
-description = "The official Python library for the crawler.dev API"
+version = "1.0.0"
+description = "The official Python library for the api.crawler.dev-sdks API"
 dynamic = ["readme"]
 license = "Apache-2.0"
 authors = [
-{ name = "Crawler Dev", email = "" },
+{ name = "API Crawler Dev SDKs", email = "" },
 ]
+
 dependencies = [
-    "httpx>=0.23.0, <1",
-    "pydantic>=1.9.0, <3",
-    "typing-extensions>=4.10, <5",
-    "anyio>=3.5.0, <5",
-    "distro>=1.7.0, <2",
-    "sniffio",
+  "httpx>=0.23.0, <1",
+  "pydantic>=1.9.0, <3",
+  "typing-extensions>=4.10, <5",
+  "anyio>=3.5.0, <5",
+  "distro>=1.7.0, <2",
+  "sniffio",
 ]
-requires-python = ">= 3.8"
+
+requires-python = ">= 3.9"
 classifiers = [
   "Typing :: Typed",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Operating System :: OS Independent",
   "Operating System :: POSIX",
   "Operating System :: MacOS",
@@ -46,7 +48,7 @@ managed = true
 # version pins are in requirements-dev.lock
 dev-dependencies = [
     "pyright==1.1.399",
-    "mypy",
+    "mypy==1.17",
     "respx",
     "pytest",
     "pytest-asyncio",
@@ -78,14 +80,14 @@ format = { chain = [
 "check:ruff" = "ruff check ."
 "fix:ruff" = "ruff check --fix ."
 
-"check:importable" = "python -c 'import crawler.dev'"
+"check:importable" = "python -c 'import api.crawler.dev_sdks'"
 
 typecheck = { chain = [
   "typecheck:pyright",
   "typecheck:mypy"
 ]}
 "typecheck:pyright" = "pyright"
-"typecheck:verify-types" = "pyright --verifytypes crawler.dev --ignoreexternal"
+"typecheck:verify-types" = "pyright --verifytypes api.crawler.dev_sdks --ignoreexternal"
 "typecheck:mypy" = "mypy ."
 
 [build-system]
@@ -98,7 +100,7 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/crawler"]
+packages = ["src/api"]
 
 [tool.hatch.build.targets.sdist]
 # Basically everything except hidden files/directories (such as .github, .devcontainers, .python-version, etc)
@@ -141,7 +143,7 @@ filterwarnings = [
 # there are a couple of flags that are still disabled by
 # default in strict mode as they are experimental and niche.
 typeCheckingMode = "strict"
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 
 exclude = [
     "_dev",
@@ -166,7 +168,7 @@ show_error_codes = true
 #
 # We also exclude our `tests` as mypy doesn't always infer
 # types correctly and Pyright will still catch any type errors.
-exclude = ['src/crawler/dev/_files.py', '_dev/.*.py', 'tests/.*']
+exclude = ['src/api/crawler/dev_sdks/_files.py', '_dev/.*.py', 'tests/.*']
 
 strict_equality = true
 implicit_reexport = true
@@ -258,7 +260,7 @@ length-sort = true
 length-sort-straight = true
 combine-as-imports = true
 extra-standard-library = ["typing_extensions"]
-known-first-party = ["crawler.dev", "tests"]
+known-first-party = ["api.crawler.dev_sdks", "tests"]
 
 [tool.ruff.lint.per-file-ignores]
 "bin/**.py" = ["T201", "T203"]

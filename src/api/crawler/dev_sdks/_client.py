@@ -21,9 +21,9 @@ from ._types import (
 )
 from ._utils import is_given, get_async_library
 from ._version import __version__
-from .resources import urls, files
+from .resources import extract
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
-from ._exceptions import APIStatusError, CrawlerDevError
+from ._exceptions import APIStatusError, APICrawlerDevSDKsError
 from ._base_client import (
     DEFAULT_MAX_RETRIES,
     SyncAPIClient,
@@ -35,18 +35,17 @@ __all__ = [
     "Transport",
     "ProxiesTypes",
     "RequestOptions",
-    "CrawlerDev",
-    "AsyncCrawlerDev",
+    "APICrawlerDevSDKs",
+    "AsyncAPICrawlerDevSDKs",
     "Client",
     "AsyncClient",
 ]
 
 
-class CrawlerDev(SyncAPIClient):
-    files: files.FilesResource
-    urls: urls.URLsResource
-    with_raw_response: CrawlerDevWithRawResponse
-    with_streaming_response: CrawlerDevWithStreamedResponse
+class APICrawlerDevSDKs(SyncAPIClient):
+    extract: extract.ExtractResource
+    with_raw_response: APICrawlerDevSDKsWithRawResponse
+    with_streaming_response: APICrawlerDevSDKsWithStreamedResponse
 
     # client options
     api_key: str
@@ -74,20 +73,20 @@ class CrawlerDev(SyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new synchronous CrawlerDev client instance.
+        """Construct a new synchronous APICrawlerDevSDKs client instance.
 
-        This automatically infers the `api_key` argument from the `CRAWLER_DEV_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `API_CRAWLER_DEV_SDKS_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("CRAWLER_DEV_API_KEY")
+            api_key = os.environ.get("API_CRAWLER_DEV_SDKS_API_KEY")
         if api_key is None:
-            raise CrawlerDevError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the CRAWLER_DEV_API_KEY environment variable"
+            raise APICrawlerDevSDKsError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the API_CRAWLER_DEV_SDKS_API_KEY environment variable"
             )
         self.api_key = api_key
 
         if base_url is None:
-            base_url = os.environ.get("CRAWLER_DEV_BASE_URL")
+            base_url = os.environ.get("API_CRAWLER_DEV_SDKS_BASE_URL")
         if base_url is None:
             base_url = f"https://api.crawler.dev"
 
@@ -102,10 +101,9 @@ class CrawlerDev(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.files = files.FilesResource(self)
-        self.urls = urls.URLsResource(self)
-        self.with_raw_response = CrawlerDevWithRawResponse(self)
-        self.with_streaming_response = CrawlerDevWithStreamedResponse(self)
+        self.extract = extract.ExtractResource(self)
+        self.with_raw_response = APICrawlerDevSDKsWithRawResponse(self)
+        self.with_streaming_response = APICrawlerDevSDKsWithStreamedResponse(self)
 
     @property
     @override
@@ -212,11 +210,10 @@ class CrawlerDev(SyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class AsyncCrawlerDev(AsyncAPIClient):
-    files: files.AsyncFilesResource
-    urls: urls.AsyncURLsResource
-    with_raw_response: AsyncCrawlerDevWithRawResponse
-    with_streaming_response: AsyncCrawlerDevWithStreamedResponse
+class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
+    extract: extract.AsyncExtractResource
+    with_raw_response: AsyncAPICrawlerDevSDKsWithRawResponse
+    with_streaming_response: AsyncAPICrawlerDevSDKsWithStreamedResponse
 
     # client options
     api_key: str
@@ -244,20 +241,20 @@ class AsyncCrawlerDev(AsyncAPIClient):
         # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
-        """Construct a new async AsyncCrawlerDev client instance.
+        """Construct a new async AsyncAPICrawlerDevSDKs client instance.
 
-        This automatically infers the `api_key` argument from the `CRAWLER_DEV_API_KEY` environment variable if it is not provided.
+        This automatically infers the `api_key` argument from the `API_CRAWLER_DEV_SDKS_API_KEY` environment variable if it is not provided.
         """
         if api_key is None:
-            api_key = os.environ.get("CRAWLER_DEV_API_KEY")
+            api_key = os.environ.get("API_CRAWLER_DEV_SDKS_API_KEY")
         if api_key is None:
-            raise CrawlerDevError(
-                "The api_key client option must be set either by passing api_key to the client or by setting the CRAWLER_DEV_API_KEY environment variable"
+            raise APICrawlerDevSDKsError(
+                "The api_key client option must be set either by passing api_key to the client or by setting the API_CRAWLER_DEV_SDKS_API_KEY environment variable"
             )
         self.api_key = api_key
 
         if base_url is None:
-            base_url = os.environ.get("CRAWLER_DEV_BASE_URL")
+            base_url = os.environ.get("API_CRAWLER_DEV_SDKS_BASE_URL")
         if base_url is None:
             base_url = f"https://api.crawler.dev"
 
@@ -272,10 +269,9 @@ class AsyncCrawlerDev(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.files = files.AsyncFilesResource(self)
-        self.urls = urls.AsyncURLsResource(self)
-        self.with_raw_response = AsyncCrawlerDevWithRawResponse(self)
-        self.with_streaming_response = AsyncCrawlerDevWithStreamedResponse(self)
+        self.extract = extract.AsyncExtractResource(self)
+        self.with_raw_response = AsyncAPICrawlerDevSDKsWithRawResponse(self)
+        self.with_streaming_response = AsyncAPICrawlerDevSDKsWithStreamedResponse(self)
 
     @property
     @override
@@ -382,30 +378,26 @@ class AsyncCrawlerDev(AsyncAPIClient):
         return APIStatusError(err_msg, response=response, body=body)
 
 
-class CrawlerDevWithRawResponse:
-    def __init__(self, client: CrawlerDev) -> None:
-        self.files = files.FilesResourceWithRawResponse(client.files)
-        self.urls = urls.URLsResourceWithRawResponse(client.urls)
+class APICrawlerDevSDKsWithRawResponse:
+    def __init__(self, client: APICrawlerDevSDKs) -> None:
+        self.extract = extract.ExtractResourceWithRawResponse(client.extract)
 
 
-class AsyncCrawlerDevWithRawResponse:
-    def __init__(self, client: AsyncCrawlerDev) -> None:
-        self.files = files.AsyncFilesResourceWithRawResponse(client.files)
-        self.urls = urls.AsyncURLsResourceWithRawResponse(client.urls)
+class AsyncAPICrawlerDevSDKsWithRawResponse:
+    def __init__(self, client: AsyncAPICrawlerDevSDKs) -> None:
+        self.extract = extract.AsyncExtractResourceWithRawResponse(client.extract)
 
 
-class CrawlerDevWithStreamedResponse:
-    def __init__(self, client: CrawlerDev) -> None:
-        self.files = files.FilesResourceWithStreamingResponse(client.files)
-        self.urls = urls.URLsResourceWithStreamingResponse(client.urls)
+class APICrawlerDevSDKsWithStreamedResponse:
+    def __init__(self, client: APICrawlerDevSDKs) -> None:
+        self.extract = extract.ExtractResourceWithStreamingResponse(client.extract)
 
 
-class AsyncCrawlerDevWithStreamedResponse:
-    def __init__(self, client: AsyncCrawlerDev) -> None:
-        self.files = files.AsyncFilesResourceWithStreamingResponse(client.files)
-        self.urls = urls.AsyncURLsResourceWithStreamingResponse(client.urls)
+class AsyncAPICrawlerDevSDKsWithStreamedResponse:
+    def __init__(self, client: AsyncAPICrawlerDevSDKs) -> None:
+        self.extract = extract.AsyncExtractResourceWithStreamingResponse(client.extract)
 
 
-Client = CrawlerDev
+Client = APICrawlerDevSDKs
 
-AsyncClient = AsyncCrawlerDev
+AsyncClient = AsyncAPICrawlerDevSDKs

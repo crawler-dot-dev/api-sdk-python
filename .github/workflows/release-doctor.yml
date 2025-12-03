@@ -18,4 +18,4 @@ jobs:
         run: |
           bash ./bin/check-release-environment
         env:
-          PYPI_TOKEN: ${{ secrets.CRAWLER_DEV_PYPI_TOKEN || secrets.PYPI_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.API_CRAWLER_DEV_SDKS_PYPI_TOKEN || secrets.PYPI_TOKEN }}

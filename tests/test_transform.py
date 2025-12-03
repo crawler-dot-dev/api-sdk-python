@@ -8,15 +8,15 @@ from typing_extensions import Required, Annotated, TypedDict
 
 import pytest
 
-from crawler.dev._types import Base64FileInput, omit, not_given
-from crawler.dev._utils import (
+from api.crawler.dev_sdks._types import Base64FileInput, omit, not_given
+from api.crawler.dev_sdks._utils import (
     PropertyInfo,
     transform as _transform,
     parse_datetime,
     async_transform as _async_transform,
 )
-from crawler.dev._compat import PYDANTIC_V1
-from crawler.dev._models import BaseModel
+from api.crawler.dev_sdks._compat import PYDANTIC_V1
+from api.crawler.dev_sdks._models import BaseModel
 
 _T = TypeVar("_T")
 
