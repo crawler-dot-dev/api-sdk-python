@@ -5,13 +5,13 @@ from typing import Iterator, AsyncIterator
 import httpx
 import pytest
 
-from crawler.dev import CrawlerDev, AsyncCrawlerDev
-from crawler.dev._streaming import Stream, AsyncStream, ServerSentEvent
+from api.crawler.dev_sdks import APICrawlerDevSDKs, AsyncAPICrawlerDevSDKs
+from api.crawler.dev_sdks._streaming import Stream, AsyncStream, ServerSentEvent
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_basic(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_basic(sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: completion\n"
         yield b'data: {"foo":true}\n'
@@ -28,7 +28,7 @@ async def test_basic(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerD
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_missing_event(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_data_missing_event(sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"foo":true}\n'
         yield b"\n"
@@ -44,7 +44,7 @@ async def test_data_missing_event(sync: bool, client: CrawlerDev, async_client: 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_event_missing_data(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_event_missing_data(sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"\n"
@@ -60,7 +60,7 @@ async def test_event_missing_data(sync: bool, client: CrawlerDev, async_client: 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_multiple_events(sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"\n"
@@ -82,7 +82,9 @@ async def test_multiple_events(sync: bool, client: CrawlerDev, async_client: Asy
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events_with_data(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_multiple_events_with_data(
+    sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs
+) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b'data: {"foo":true}\n'
@@ -107,7 +109,7 @@ async def test_multiple_events_with_data(sync: bool, client: CrawlerDev, async_c
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_multiple_data_lines_with_empty_line(
-    sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev
+    sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
@@ -130,7 +132,9 @@ async def test_multiple_data_lines_with_empty_line(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_json_escaped_double_new_line(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_data_json_escaped_double_new_line(
+    sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs
+) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b'data: {"foo": "my long\\n\\ncontent"}'
@@ -147,7 +151,7 @@ async def test_data_json_escaped_double_new_line(sync: bool, client: CrawlerDev,
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_data_lines(sync: bool, client: CrawlerDev, async_client: AsyncCrawlerDev) -> None:
+async def test_multiple_data_lines(sync: bool, client: APICrawlerDevSDKs, async_client: AsyncAPICrawlerDevSDKs) -> None:
     def body() -> Iterator[bytes]:
         yield b"event: ping\n"
         yield b"data: {\n"
@@ -167,8 +171,8 @@ async def test_multiple_data_lines(sync: bool, client: CrawlerDev, async_client:
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_special_new_line_character(
     sync: bool,
-    client: CrawlerDev,
-    async_client: AsyncCrawlerDev,
+    client: APICrawlerDevSDKs,
+    async_client: AsyncAPICrawlerDevSDKs,
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"content":" culpa"}\n'
@@ -198,8 +202,8 @@ async def test_special_new_line_character(
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
 async def test_multi_byte_character_multiple_chunks(
     sync: bool,
-    client: CrawlerDev,
-    async_client: AsyncCrawlerDev,
+    client: APICrawlerDevSDKs,
+    async_client: AsyncAPICrawlerDevSDKs,
 ) -> None:
     def body() -> Iterator[bytes]:
         yield b'data: {"content":"'
@@ -239,8 +243,8 @@ def make_event_iterator(
     content: Iterator[bytes],
     *,
     sync: bool,
-    client: CrawlerDev,
-    async_client: AsyncCrawlerDev,
+    client: APICrawlerDevSDKs,
+    async_client: AsyncAPICrawlerDevSDKs,
 ) -> Iterator[ServerSentEvent] | AsyncIterator[ServerSentEvent]:
     if sync:
         return Stream(cast_to=object, client=client, response=httpx.Response(200, content=content))._iter_events()
