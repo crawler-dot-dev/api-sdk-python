@@ -1,5 +1,5 @@
 [project]
-name = "api.crawler.dev_sdks"
+name = "crawler.dev"
 version = "0.0.1"
 description = "The official Python library for the api.crawler.dev-sdks API"
 dynamic = ["readme"]

@@ -1,7 +1,7 @@
 # API Crawler Dev SDKs Python API library
 
 <!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/api.crawler.dev_sdks.svg?label=pypi%20(stable))](https://pypi.org/project/api.crawler.dev_sdks/)
+[![PyPI version](https://img.shields.io/pypi/v/crawler.dev.svg?label=pypi%20(stable))](https://pypi.org/project/crawler.dev/)
 
 The API Crawler Dev SDKs Python library provides convenient access to the API Crawler Dev SDKs REST API from any Python 3.9+
 application. The library includes type definitions for all request params and response fields,
@@ -16,12 +16,9 @@ The full API of this library can be found in [api.md](api.md).
 ## Installation
 
 ```sh
-# install from the production repo
-pip install git+ssh://git@github.com/crawler-dot-dev/api-sdk-python.git
+# install from PyPI
+pip install crawler.dev
 ```
-
-> [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install api.crawler.dev_sdks`
 
 ## Usage
 
@@ -83,8 +80,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from the production repo
-pip install 'api.crawler.dev_sdks[aiohttp] @ git+ssh://git@github.com/crawler-dot-dev/api-sdk-python.git'
+# install from PyPI
+pip install crawler.dev[aiohttp]
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
