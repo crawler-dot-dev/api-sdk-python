@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.1 (2025-12-09)
+
+Full Changelog: [v1.0.0...v1.0.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.0...v1.0.1)
+
+### Bug Fixes
+
+* **types:** allow pyright to infer TypedDict types within SequenceNotStr ([f06210d](https://github.com/crawler-dot-dev/api-sdk-python/commit/f06210d2930c209d0604db501a6e5cd2a7859d93))
+
+
+### Chores
+
+* add missing docstrings ([f3738bc](https://github.com/crawler-dot-dev/api-sdk-python/commit/f3738bcff54242d02867765458de92b01b542b88))
+
 ## 1.0.0 (2025-12-03)
 
 Full Changelog: [v0.0.1...v1.0.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v0.0.1...v1.0.0)
