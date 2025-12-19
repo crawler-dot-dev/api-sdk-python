@@ -90,6 +90,8 @@ class ExtractFromURLParams(TypedDict, total=False):
 
 
 class Proxy(TypedDict, total=False):
+    """Proxy configuration for the request"""
+
     password: str
     """Proxy password for authentication"""
 

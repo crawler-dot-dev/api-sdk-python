@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 from typing_extensions import Self, override
 
 import httpx
@@ -20,8 +20,8 @@ from ._types import (
     not_given,
 )
 from ._utils import is_given, get_async_library
+from ._compat import cached_property
 from ._version import __version__
-from .resources import extract
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import APIStatusError, APICrawlerDevSDKsError
 from ._base_client import (
@@ -29,6 +29,10 @@ from ._base_client import (
     SyncAPIClient,
     AsyncAPIClient,
 )
+
+if TYPE_CHECKING:
+    from .resources import extract
+    from .resources.extract import ExtractResource, AsyncExtractResource
 
 __all__ = [
     "Timeout",
@@ -43,10 +47,6 @@ __all__ = [
 
 
 class APICrawlerDevSDKs(SyncAPIClient):
-    extract: extract.ExtractResource
-    with_raw_response: APICrawlerDevSDKsWithRawResponse
-    with_streaming_response: APICrawlerDevSDKsWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -101,9 +101,19 @@ class APICrawlerDevSDKs(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.extract = extract.ExtractResource(self)
-        self.with_raw_response = APICrawlerDevSDKsWithRawResponse(self)
-        self.with_streaming_response = APICrawlerDevSDKsWithStreamedResponse(self)
+    @cached_property
+    def extract(self) -> ExtractResource:
+        from .resources.extract import ExtractResource
+
+        return ExtractResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> APICrawlerDevSDKsWithRawResponse:
+        return APICrawlerDevSDKsWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> APICrawlerDevSDKsWithStreamedResponse:
+        return APICrawlerDevSDKsWithStreamedResponse(self)
 
     @property
     @override
@@ -211,10 +221,6 @@ class APICrawlerDevSDKs(SyncAPIClient):
 
 
 class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
-    extract: extract.AsyncExtractResource
-    with_raw_response: AsyncAPICrawlerDevSDKsWithRawResponse
-    with_streaming_response: AsyncAPICrawlerDevSDKsWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -269,9 +275,19 @@ class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.extract = extract.AsyncExtractResource(self)
-        self.with_raw_response = AsyncAPICrawlerDevSDKsWithRawResponse(self)
-        self.with_streaming_response = AsyncAPICrawlerDevSDKsWithStreamedResponse(self)
+    @cached_property
+    def extract(self) -> AsyncExtractResource:
+        from .resources.extract import AsyncExtractResource
+
+        return AsyncExtractResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> AsyncAPICrawlerDevSDKsWithRawResponse:
+        return AsyncAPICrawlerDevSDKsWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> AsyncAPICrawlerDevSDKsWithStreamedResponse:
+        return AsyncAPICrawlerDevSDKsWithStreamedResponse(self)
 
     @property
     @override
@@ -379,23 +395,55 @@ class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
 
 
 class APICrawlerDevSDKsWithRawResponse:
+    _client: APICrawlerDevSDKs
+
     def __init__(self, client: APICrawlerDevSDKs) -> None:
-        self.extract = extract.ExtractResourceWithRawResponse(client.extract)
+        self._client = client
+
+    @cached_property
+    def extract(self) -> extract.ExtractResourceWithRawResponse:
+        from .resources.extract import ExtractResourceWithRawResponse
+
+        return ExtractResourceWithRawResponse(self._client.extract)
 
 
 class AsyncAPICrawlerDevSDKsWithRawResponse:
+    _client: AsyncAPICrawlerDevSDKs
+
     def __init__(self, client: AsyncAPICrawlerDevSDKs) -> None:
-        self.extract = extract.AsyncExtractResourceWithRawResponse(client.extract)
+        self._client = client
+
+    @cached_property
+    def extract(self) -> extract.AsyncExtractResourceWithRawResponse:
+        from .resources.extract import AsyncExtractResourceWithRawResponse
+
+        return AsyncExtractResourceWithRawResponse(self._client.extract)
 
 
 class APICrawlerDevSDKsWithStreamedResponse:
+    _client: APICrawlerDevSDKs
+
     def __init__(self, client: APICrawlerDevSDKs) -> None:
-        self.extract = extract.ExtractResourceWithStreamingResponse(client.extract)
+        self._client = client
+
+    @cached_property
+    def extract(self) -> extract.ExtractResourceWithStreamingResponse:
+        from .resources.extract import ExtractResourceWithStreamingResponse
+
+        return ExtractResourceWithStreamingResponse(self._client.extract)
 
 
 class AsyncAPICrawlerDevSDKsWithStreamedResponse:
+    _client: AsyncAPICrawlerDevSDKs
+
     def __init__(self, client: AsyncAPICrawlerDevSDKs) -> None:
-        self.extract = extract.AsyncExtractResourceWithStreamingResponse(client.extract)
+        self._client = client
+
+    @cached_property
+    def extract(self) -> extract.AsyncExtractResourceWithStreamingResponse:
+        from .resources.extract import AsyncExtractResourceWithStreamingResponse
+
+        return AsyncExtractResourceWithStreamingResponse(self._client.extract)
 
 
 Client = APICrawlerDevSDKs
