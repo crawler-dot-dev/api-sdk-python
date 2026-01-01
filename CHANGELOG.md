@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2 (2026-01-01)
+
+Full Changelog: [v1.0.1...v1.0.2](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.1...v1.0.2)
+
+### Chores
+
+* **internal:** codegen related update ([03deb23](https://github.com/crawler-dot-dev/api-sdk-python/commit/03deb23e5804bb5f8f12af32e7b77f7831023d89))
+
 ## 1.0.1 (2025-12-19)
 
 Full Changelog: [v1.0.0...v1.0.1](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.0...v1.0.1)
