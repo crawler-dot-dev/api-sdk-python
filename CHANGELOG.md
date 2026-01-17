@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 (2026-01-17)
+
+Full Changelog: [v1.0.2...v1.1.0](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.2...v1.1.0)
+
+### Features
+
+* **client:** add support for binary request streaming ([5a95056](https://github.com/crawler-dot-dev/api-sdk-python/commit/5a950568e19cd38ef431ea5cf66e50b4f511dfae))
+
+
+### Chores
+
+* **internal:** update `actions/checkout` version ([27984b1](https://github.com/crawler-dot-dev/api-sdk-python/commit/27984b128a5c59fa3f47d0de622f32511d0a348b))
+
 ## 1.0.2 (2026-01-01)
 
 Full Changelog: [v1.0.1...v1.0.2](https://github.com/crawler-dot-dev/api-sdk-python/compare/v1.0.1...v1.0.2)
