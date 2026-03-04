@@ -26,6 +26,8 @@ __all__ = ["ExtractResource", "AsyncExtractResource"]
 
 
 class ExtractResource(SyncAPIResource):
+    """Endpoints for extracting text from files and URLs"""
+
     @cached_property
     def with_raw_response(self) -> ExtractResourceWithRawResponse:
         """
@@ -244,6 +246,8 @@ class ExtractResource(SyncAPIResource):
 
 
 class AsyncExtractResource(AsyncAPIResource):
+    """Endpoints for extracting text from files and URLs"""
+
     @cached_property
     def with_raw_response(self) -> AsyncExtractResourceWithRawResponse:
         """

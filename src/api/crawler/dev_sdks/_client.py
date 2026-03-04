@@ -103,6 +103,7 @@ class APICrawlerDevSDKs(SyncAPIClient):
 
     @cached_property
     def extract(self) -> ExtractResource:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResource
 
         return ExtractResource(self)
@@ -277,6 +278,7 @@ class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
 
     @cached_property
     def extract(self) -> AsyncExtractResource:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResource
 
         return AsyncExtractResource(self)
@@ -402,6 +404,7 @@ class APICrawlerDevSDKsWithRawResponse:
 
     @cached_property
     def extract(self) -> extract.ExtractResourceWithRawResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResourceWithRawResponse
 
         return ExtractResourceWithRawResponse(self._client.extract)
@@ -415,6 +418,7 @@ class AsyncAPICrawlerDevSDKsWithRawResponse:
 
     @cached_property
     def extract(self) -> extract.AsyncExtractResourceWithRawResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResourceWithRawResponse
 
         return AsyncExtractResourceWithRawResponse(self._client.extract)
@@ -428,6 +432,7 @@ class APICrawlerDevSDKsWithStreamedResponse:
 
     @cached_property
     def extract(self) -> extract.ExtractResourceWithStreamingResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResourceWithStreamingResponse
 
         return ExtractResourceWithStreamingResponse(self._client.extract)
@@ -441,6 +446,7 @@ class AsyncAPICrawlerDevSDKsWithStreamedResponse:
 
     @cached_property
     def extract(self) -> extract.AsyncExtractResourceWithStreamingResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResourceWithStreamingResponse
 
         return AsyncExtractResourceWithStreamingResponse(self._client.extract)
