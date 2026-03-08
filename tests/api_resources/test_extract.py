@@ -24,7 +24,7 @@ class TestExtract:
     @parametrize
     def test_method_from_file(self, client: APICrawlerDevSDKs) -> None:
         extract = client.extract.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         )
         assert_matches_type(ExtractFromFileResponse, extract, path=["response"])
 
@@ -32,7 +32,7 @@ class TestExtract:
     @parametrize
     def test_method_from_file_with_all_params(self, client: APICrawlerDevSDKs) -> None:
         extract = client.extract.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
             clean_text=True,
             formats=["text", "markdown"],
             max_timeout="30s",
@@ -43,7 +43,7 @@ class TestExtract:
     @parametrize
     def test_raw_response_from_file(self, client: APICrawlerDevSDKs) -> None:
         response = client.extract.with_raw_response.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         )
 
         assert response.is_closed is True
@@ -55,7 +55,7 @@ class TestExtract:
     @parametrize
     def test_streaming_response_from_file(self, client: APICrawlerDevSDKs) -> None:
         with client.extract.with_streaming_response.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -134,7 +134,7 @@ class TestAsyncExtract:
     @parametrize
     async def test_method_from_file(self, async_client: AsyncAPICrawlerDevSDKs) -> None:
         extract = await async_client.extract.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         )
         assert_matches_type(ExtractFromFileResponse, extract, path=["response"])
 
@@ -142,7 +142,7 @@ class TestAsyncExtract:
     @parametrize
     async def test_method_from_file_with_all_params(self, async_client: AsyncAPICrawlerDevSDKs) -> None:
         extract = await async_client.extract.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
             clean_text=True,
             formats=["text", "markdown"],
             max_timeout="30s",
@@ -153,7 +153,7 @@ class TestAsyncExtract:
     @parametrize
     async def test_raw_response_from_file(self, async_client: AsyncAPICrawlerDevSDKs) -> None:
         response = await async_client.extract.with_raw_response.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         )
 
         assert response.is_closed is True
@@ -165,7 +165,7 @@ class TestAsyncExtract:
     @parametrize
     async def test_streaming_response_from_file(self, async_client: AsyncAPICrawlerDevSDKs) -> None:
         async with async_client.extract.with_streaming_response.from_file(
-            file=b"raw file contents",
+            file=b"Example data",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

@@ -873,7 +873,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            client.extract.with_streaming_response.from_file(file=b"raw file contents").__enter__()
+            client.extract.with_streaming_response.from_file(file=b"Example data").__enter__()
 
         assert _get_open_connections(client) == 0
 
@@ -883,7 +883,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            client.extract.with_streaming_response.from_file(file=b"raw file contents").__enter__()
+            client.extract.with_streaming_response.from_file(file=b"Example data").__enter__()
         assert _get_open_connections(client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -912,7 +912,7 @@ class TestAPICrawlerDevSDKs:
 
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
-        response = client.extract.with_raw_response.from_file(file=b"raw file contents")
+        response = client.extract.with_raw_response.from_file(file=b"Example data")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -937,7 +937,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": Omit()}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -962,7 +962,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": "42"}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
@@ -1791,7 +1791,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await async_client.extract.with_streaming_response.from_file(file=b"raw file contents").__aenter__()
+            await async_client.extract.with_streaming_response.from_file(file=b"Example data").__aenter__()
 
         assert _get_open_connections(async_client) == 0
 
@@ -1803,7 +1803,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await async_client.extract.with_streaming_response.from_file(file=b"raw file contents").__aenter__()
+            await async_client.extract.with_streaming_response.from_file(file=b"Example data").__aenter__()
         assert _get_open_connections(async_client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1832,7 +1832,7 @@ class TestAsyncAPICrawlerDevSDKs:
 
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
-        response = await client.extract.with_raw_response.from_file(file=b"raw file contents")
+        response = await client.extract.with_raw_response.from_file(file=b"Example data")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1857,7 +1857,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = await client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": Omit()}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -1882,7 +1882,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = await client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": "42"}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
