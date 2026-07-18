@@ -1,6 +1,6 @@
 [project]
 name = "crawler.dev"
-version = "1.0.2"
+version = "1.1.0"
 description = "The official Python library for the api.crawler.dev-sdks API"
 dynamic = ["readme"]
 license = "Apache-2.0"
