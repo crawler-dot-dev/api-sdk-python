@@ -8,10 +8,11 @@ import sys
 import json
 import asyncio
 import inspect
+import dataclasses
 import tracemalloc
-from typing import Any, Union, cast
+from typing import Any, Union, TypeVar, Callable, Iterable, Iterator, Optional, Coroutine, cast
 from unittest import mock
-from typing_extensions import Literal
+from typing_extensions import Literal, AsyncIterator, override
 
 import httpx
 import pytest
@@ -41,6 +42,7 @@ from api.crawler.dev_sdks._base_client import (
 
 from .utils import update_env
 
+T = TypeVar("T")
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 api_key = "My API Key"
 
@@ -53,6 +55,57 @@ def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
 
 def _low_retry_timeout(*_args: Any, **_kwargs: Any) -> float:
     return 0.1
+
+
+def mirror_request_content(request: httpx.Request) -> httpx.Response:
+    return httpx.Response(200, content=request.content)
+
+
+# note: we can't use the httpx.MockTransport class as it consumes the request
+#       body itself, which means we can't test that the body is read lazily
+class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
+    def __init__(
+        self,
+        handler: Callable[[httpx.Request], httpx.Response]
+        | Callable[[httpx.Request], Coroutine[Any, Any, httpx.Response]],
+    ) -> None:
+        self.handler = handler
+
+    @override
+    def handle_request(
+        self,
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert not inspect.iscoroutinefunction(self.handler), "handler must not be a coroutine function"
+        assert inspect.isfunction(self.handler), "handler must be a function"
+        return self.handler(request)
+
+    @override
+    async def handle_async_request(
+        self,
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert inspect.iscoroutinefunction(self.handler), "handler must be a coroutine function"
+        return await self.handler(request)
+
+
+@dataclasses.dataclass
+class Counter:
+    value: int = 0
+
+
+def _make_sync_iterator(iterable: Iterable[T], counter: Optional[Counter] = None) -> Iterator[T]:
+    for item in iterable:
+        if counter:
+            counter.value += 1
+        yield item
+
+
+async def _make_async_iterator(iterable: Iterable[T], counter: Optional[Counter] = None) -> AsyncIterator[T]:
+    for item in iterable:
+        if counter:
+            counter.value += 1
+        yield item
 
 
 def _get_open_connections(client: APICrawlerDevSDKs | AsyncAPICrawlerDevSDKs) -> int:
@@ -381,6 +434,30 @@ class TestAPICrawlerDevSDKs:
 
         client.close()
 
+    def test_hardcoded_query_params_in_url(self, client: APICrawlerDevSDKs) -> None:
+        request = client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
+        url = httpx.URL(request.url)
+        assert dict(url.params) == {"beta": "true"}
+
+        request = client._build_request(
+            FinalRequestOptions(
+                method="get",
+                url="/foo?beta=true",
+                params={"limit": "10", "page": "abc"},
+            )
+        )
+        url = httpx.URL(request.url)
+        assert dict(url.params) == {"beta": "true", "limit": "10", "page": "abc"}
+
+        request = client._build_request(
+            FinalRequestOptions(
+                method="get",
+                url="/files/a%2Fb?beta=true",
+                params={"limit": "10"},
+            )
+        )
+        assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
+
     def test_request_extra_json(self, client: APICrawlerDevSDKs) -> None:
         request = client._build_request(
             FinalRequestOptions(
@@ -506,6 +583,72 @@ class TestAPICrawlerDevSDKs:
             b"--6b7ba517decee4a450543ea6ae821c82--",
             b"",
         ]
+
+    @pytest.mark.respx(base_url=base_url)
+    def test_binary_content_upload(self, respx_mock: MockRouter, client: APICrawlerDevSDKs) -> None:
+        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+
+        file_content = b"Hello, this is a test file."
+
+        response = client.post(
+            "/upload",
+            content=file_content,
+            cast_to=httpx.Response,
+            options={"headers": {"Content-Type": "application/octet-stream"}},
+        )
+
+        assert response.status_code == 200
+        assert response.request.headers["Content-Type"] == "application/octet-stream"
+        assert response.content == file_content
+
+    def test_binary_content_upload_with_iterator(self) -> None:
+        file_content = b"Hello, this is a test file."
+        counter = Counter()
+        iterator = _make_sync_iterator([file_content], counter=counter)
+
+        def mock_handler(request: httpx.Request) -> httpx.Response:
+            assert counter.value == 0, "the request body should not have been read"
+            return httpx.Response(200, content=request.read())
+
+        with APICrawlerDevSDKs(
+            base_url=base_url,
+            api_key=api_key,
+            _strict_response_validation=True,
+            http_client=httpx.Client(transport=MockTransport(handler=mock_handler)),
+        ) as client:
+            response = client.post(
+                "/upload",
+                content=iterator,
+                cast_to=httpx.Response,
+                options={"headers": {"Content-Type": "application/octet-stream"}},
+            )
+
+            assert response.status_code == 200
+            assert response.request.headers["Content-Type"] == "application/octet-stream"
+            assert response.content == file_content
+            assert counter.value == 1
+
+    @pytest.mark.respx(base_url=base_url)
+    def test_binary_content_upload_with_body_is_deprecated(
+        self, respx_mock: MockRouter, client: APICrawlerDevSDKs
+    ) -> None:
+        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+
+        file_content = b"Hello, this is a test file."
+
+        with pytest.deprecated_call(
+            match="Passing raw bytes as `body` is deprecated and will be removed in a future version. Please pass raw bytes via the `content` parameter instead."
+        ):
+            response = client.post(
+                "/upload",
+                body=file_content,
+                cast_to=httpx.Response,
+                options={"headers": {"Content-Type": "application/octet-stream"}},
+            )
+
+        assert response.status_code == 200
+        assert response.request.headers["Content-Type"] == "application/octet-stream"
+        assert response.content == file_content
 
     @pytest.mark.respx(base_url=base_url)
     def test_basic_union_response(self, respx_mock: MockRouter, client: APICrawlerDevSDKs) -> None:
@@ -754,7 +897,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            client.extract.with_streaming_response.from_file(file=b"raw file contents").__enter__()
+            client.extract.with_streaming_response.from_file(file=b"Example data").__enter__()
 
         assert _get_open_connections(client) == 0
 
@@ -764,7 +907,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            client.extract.with_streaming_response.from_file(file=b"raw file contents").__enter__()
+            client.extract.with_streaming_response.from_file(file=b"Example data").__enter__()
         assert _get_open_connections(client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -793,7 +936,7 @@ class TestAPICrawlerDevSDKs:
 
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
-        response = client.extract.with_raw_response.from_file(file=b"raw file contents")
+        response = client.extract.with_raw_response.from_file(file=b"Example data")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -818,7 +961,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": Omit()}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -843,7 +986,7 @@ class TestAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": "42"}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
@@ -851,6 +994,14 @@ class TestAPICrawlerDevSDKs:
     def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Test that the proxy environment variables are set correctly
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
+        # Delete in case our environment has any proxy env vars set
+        monkeypatch.delenv("HTTP_PROXY", raising=False)
+        monkeypatch.delenv("ALL_PROXY", raising=False)
+        monkeypatch.delenv("NO_PROXY", raising=False)
+        monkeypatch.delenv("http_proxy", raising=False)
+        monkeypatch.delenv("https_proxy", raising=False)
+        monkeypatch.delenv("all_proxy", raising=False)
+        monkeypatch.delenv("no_proxy", raising=False)
 
         client = DefaultHttpxClient()
 
@@ -1216,6 +1367,30 @@ class TestAsyncAPICrawlerDevSDKs:
 
         await client.close()
 
+    async def test_hardcoded_query_params_in_url(self, async_client: AsyncAPICrawlerDevSDKs) -> None:
+        request = async_client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
+        url = httpx.URL(request.url)
+        assert dict(url.params) == {"beta": "true"}
+
+        request = async_client._build_request(
+            FinalRequestOptions(
+                method="get",
+                url="/foo?beta=true",
+                params={"limit": "10", "page": "abc"},
+            )
+        )
+        url = httpx.URL(request.url)
+        assert dict(url.params) == {"beta": "true", "limit": "10", "page": "abc"}
+
+        request = async_client._build_request(
+            FinalRequestOptions(
+                method="get",
+                url="/files/a%2Fb?beta=true",
+                params={"limit": "10"},
+            )
+        )
+        assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
+
     def test_request_extra_json(self, client: APICrawlerDevSDKs) -> None:
         request = client._build_request(
             FinalRequestOptions(
@@ -1341,6 +1516,72 @@ class TestAsyncAPICrawlerDevSDKs:
             b"--6b7ba517decee4a450543ea6ae821c82--",
             b"",
         ]
+
+    @pytest.mark.respx(base_url=base_url)
+    async def test_binary_content_upload(self, respx_mock: MockRouter, async_client: AsyncAPICrawlerDevSDKs) -> None:
+        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+
+        file_content = b"Hello, this is a test file."
+
+        response = await async_client.post(
+            "/upload",
+            content=file_content,
+            cast_to=httpx.Response,
+            options={"headers": {"Content-Type": "application/octet-stream"}},
+        )
+
+        assert response.status_code == 200
+        assert response.request.headers["Content-Type"] == "application/octet-stream"
+        assert response.content == file_content
+
+    async def test_binary_content_upload_with_asynciterator(self) -> None:
+        file_content = b"Hello, this is a test file."
+        counter = Counter()
+        iterator = _make_async_iterator([file_content], counter=counter)
+
+        async def mock_handler(request: httpx.Request) -> httpx.Response:
+            assert counter.value == 0, "the request body should not have been read"
+            return httpx.Response(200, content=await request.aread())
+
+        async with AsyncAPICrawlerDevSDKs(
+            base_url=base_url,
+            api_key=api_key,
+            _strict_response_validation=True,
+            http_client=httpx.AsyncClient(transport=MockTransport(handler=mock_handler)),
+        ) as client:
+            response = await client.post(
+                "/upload",
+                content=iterator,
+                cast_to=httpx.Response,
+                options={"headers": {"Content-Type": "application/octet-stream"}},
+            )
+
+            assert response.status_code == 200
+            assert response.request.headers["Content-Type"] == "application/octet-stream"
+            assert response.content == file_content
+            assert counter.value == 1
+
+    @pytest.mark.respx(base_url=base_url)
+    async def test_binary_content_upload_with_body_is_deprecated(
+        self, respx_mock: MockRouter, async_client: AsyncAPICrawlerDevSDKs
+    ) -> None:
+        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+
+        file_content = b"Hello, this is a test file."
+
+        with pytest.deprecated_call(
+            match="Passing raw bytes as `body` is deprecated and will be removed in a future version. Please pass raw bytes via the `content` parameter instead."
+        ):
+            response = await async_client.post(
+                "/upload",
+                body=file_content,
+                cast_to=httpx.Response,
+                options={"headers": {"Content-Type": "application/octet-stream"}},
+            )
+
+        assert response.status_code == 200
+        assert response.request.headers["Content-Type"] == "application/octet-stream"
+        assert response.content == file_content
 
     @pytest.mark.respx(base_url=base_url)
     async def test_basic_union_response(self, respx_mock: MockRouter, async_client: AsyncAPICrawlerDevSDKs) -> None:
@@ -1598,7 +1839,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await async_client.extract.with_streaming_response.from_file(file=b"raw file contents").__aenter__()
+            await async_client.extract.with_streaming_response.from_file(file=b"Example data").__aenter__()
 
         assert _get_open_connections(async_client) == 0
 
@@ -1610,7 +1851,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await async_client.extract.with_streaming_response.from_file(file=b"raw file contents").__aenter__()
+            await async_client.extract.with_streaming_response.from_file(file=b"Example data").__aenter__()
         assert _get_open_connections(async_client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1639,7 +1880,7 @@ class TestAsyncAPICrawlerDevSDKs:
 
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
-        response = await client.extract.with_raw_response.from_file(file=b"raw file contents")
+        response = await client.extract.with_raw_response.from_file(file=b"Example data")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1664,7 +1905,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = await client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": Omit()}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": Omit()}
         )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
@@ -1689,7 +1930,7 @@ class TestAsyncAPICrawlerDevSDKs:
         respx_mock.post("/v1/extract/file").mock(side_effect=retry_handler)
 
         response = await client.extract.with_raw_response.from_file(
-            file=b"raw file contents", extra_headers={"x-stainless-retry-count": "42"}
+            file=b"Example data", extra_headers={"x-stainless-retry-count": "42"}
         )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
@@ -1701,6 +1942,14 @@ class TestAsyncAPICrawlerDevSDKs:
     async def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         # Test that the proxy environment variables are set correctly
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
+        # Delete in case our environment has any proxy env vars set
+        monkeypatch.delenv("HTTP_PROXY", raising=False)
+        monkeypatch.delenv("ALL_PROXY", raising=False)
+        monkeypatch.delenv("NO_PROXY", raising=False)
+        monkeypatch.delenv("http_proxy", raising=False)
+        monkeypatch.delenv("https_proxy", raising=False)
+        monkeypatch.delenv("all_proxy", raising=False)
+        monkeypatch.delenv("no_proxy", raising=False)
 
         client = DefaultAsyncHttpxClient()
 

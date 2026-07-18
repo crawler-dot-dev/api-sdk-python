@@ -19,7 +19,11 @@ from ._types import (
     RequestOptions,
     not_given,
 )
-from ._utils import is_given, get_async_library
+from ._utils import (
+    is_given,
+    is_mapping_t,
+    get_async_library,
+)
 from ._compat import cached_property
 from ._version import __version__
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
@@ -90,6 +94,15 @@ class APICrawlerDevSDKs(SyncAPIClient):
         if base_url is None:
             base_url = f"https://api.crawler.dev"
 
+        custom_headers_env = os.environ.get("API_CRAWLER_DEV_SDKS_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -103,6 +116,7 @@ class APICrawlerDevSDKs(SyncAPIClient):
 
     @cached_property
     def extract(self) -> ExtractResource:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResource
 
         return ExtractResource(self)
@@ -264,6 +278,15 @@ class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
         if base_url is None:
             base_url = f"https://api.crawler.dev"
 
+        custom_headers_env = os.environ.get("API_CRAWLER_DEV_SDKS_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -277,6 +300,7 @@ class AsyncAPICrawlerDevSDKs(AsyncAPIClient):
 
     @cached_property
     def extract(self) -> AsyncExtractResource:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResource
 
         return AsyncExtractResource(self)
@@ -402,6 +426,7 @@ class APICrawlerDevSDKsWithRawResponse:
 
     @cached_property
     def extract(self) -> extract.ExtractResourceWithRawResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResourceWithRawResponse
 
         return ExtractResourceWithRawResponse(self._client.extract)
@@ -415,6 +440,7 @@ class AsyncAPICrawlerDevSDKsWithRawResponse:
 
     @cached_property
     def extract(self) -> extract.AsyncExtractResourceWithRawResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResourceWithRawResponse
 
         return AsyncExtractResourceWithRawResponse(self._client.extract)
@@ -428,6 +454,7 @@ class APICrawlerDevSDKsWithStreamedResponse:
 
     @cached_property
     def extract(self) -> extract.ExtractResourceWithStreamingResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import ExtractResourceWithStreamingResponse
 
         return ExtractResourceWithStreamingResponse(self._client.extract)
@@ -441,6 +468,7 @@ class AsyncAPICrawlerDevSDKsWithStreamedResponse:
 
     @cached_property
     def extract(self) -> extract.AsyncExtractResourceWithStreamingResponse:
+        """Endpoints for extracting text from files and URLs"""
         from .resources.extract import AsyncExtractResourceWithStreamingResponse
 
         return AsyncExtractResourceWithStreamingResponse(self._client.extract)
